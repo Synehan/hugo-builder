@@ -3,6 +3,8 @@ name: Docker Image CI
 on:
   push:
     branches: [ master ]
+  schedule:
+    - cron: '0 23 * * *'
 
 jobs:
 
@@ -13,8 +15,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       
-    - name: Build the Docker image
+    - name: list dir
+      run: ls -la
+
+    - name: build image
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: build.sh
+      run: sh ./build.sh
