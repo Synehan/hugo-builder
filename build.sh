@@ -8,7 +8,7 @@
 
 set -ex
 
-image="synehan/hugo"
+image="synehan/hugo-builder"
 repo="gohugoio/hugo"
 
 build() {
@@ -17,9 +17,9 @@ build() {
 
   # run test
   version=$(docker run -ti --rm ${image}:${tag} version)
-  #Version:2.0.2 Commit:25c70cb9767b35d3cb97e39194a201e524fc26f7
+  #Hugo Static Site Generator v0.70.0-7F47B99E/extended linux/amd64 BuildDate: 2020-05-06T11:26:13Z
 
-  version=$(echo ${version}| cut -d":" -f2 | cut -d" " -f1)
+  version=$(echo ${version}| sed -re 's|.*v([0-9]\.[0-9]{2}\.[0-9]).*|\1|')
 
   if [ "${version}" == "${tag}" ]; then
     echo "matched"
@@ -28,7 +28,7 @@ build() {
     exit
   fi
 
-  if [[ "$GITHUB_REF" == "master" ]]; then
+  if [ "${GITHUB_REF}" == "master" ]; then
     docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     docker push ${image}:${tag}
   fi
@@ -60,7 +60,7 @@ fi
 
 echo "Update latest image to ${latest}"
 
-if [[ "$GITHUB_REF" == "master" ]]; then
+if [ "${GITHUB_REF}" == "master" ]; then
   docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   docker pull ${image}:${latest}
   docker tag ${image}:${latest} ${image}:latest

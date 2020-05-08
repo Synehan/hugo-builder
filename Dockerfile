@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:stable-slim as download
 
 ARG HUGO_VERSION
 
@@ -9,11 +9,16 @@ ADD ${BASE_URL}/v${HUGO_VERSION}/${TAR_FILE} /tmp/
 
 RUN tar -zxvf /tmp/${TAR_FILE} && \
     mv hugo /usr/bin/hugo && \
-    chmod +x /usr/bin/hugo && \
-    rm -f /tmp/${TAR_FILE} && \
-    useradd hugo
+    chmod +x /usr/bin/hugo
+
+
+FROM debian:stable-slim
+
+COPY --from=download /usr/bin/hugo /usr/bin/hugo
 
 COPY Dockerfile /
+
+RUN useradd hugo
 
 WORKDIR /build
 
