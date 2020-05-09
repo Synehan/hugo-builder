@@ -16,13 +16,9 @@ FROM debian:stable-slim
 
 COPY --from=download /usr/bin/hugo /usr/bin/hugo
 
+RUN apt update && apt install -y ca-certificates
+
 COPY Dockerfile /
-
-RUN useradd hugo
-
-WORKDIR /build
-
-USER hugo
 
 ENTRYPOINT ["hugo"]
 CMD ["--help"]
