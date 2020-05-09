@@ -60,13 +60,25 @@ else
   latest=`curl -sL https://api.github.com/repos/${repo}/releases/latest |jq -r ".tag_name"| cut -c 2-`
 fi
 
-echo "Update latest image to ${latest}"
+digest=$(curl -sL https://hub.docker.com/v2/repositories/${image}/tags/${latest} | jq -r ".images[].digest" )
+digest_latest=$(curl -sL https://hub.docker.com/v2/repositories/${image}/tags/latest | jq -r ".images[].digest" )
 
-if [[ "${GITHUB_REF}" =~ "master" ]]; then
-  if [[ ${CI} == 'true' ]]; then
-    docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+if [ "${digest_latest}" != "${digest}" ]; then
+
+  echo "Update latest image to ${latest}"
+
+  if [[ "${GITHUB_REF}" =~ "master" ]]; then
+    if [[ ${CI} == 'true' ]]; then
+      docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    fi
+    docker pull ${image}:${latest}
+    docker tag ${image}:${latest} ${image}:latest
+    docker push ${image}:latest
   fi
-  docker pull ${image}:${latest}
-  docker tag ${image}:${latest} ${image}:latest
-  docker push ${image}:latest
+
+else
+
+  echo "Nothing to do !"
+
 fi
+
