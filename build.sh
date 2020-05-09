@@ -28,7 +28,7 @@ build() {
     exit
   fi
 
-  if [ "${GITHUB_REF}" == "master" ]; then
+  if [[ "${GITHUB_REF}" =~ "master" ]]; then
     docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     docker push ${image}:${tag}
   fi
@@ -60,7 +60,7 @@ fi
 
 echo "Update latest image to ${latest}"
 
-if [ "${GITHUB_REF}" == "master" ]; then
+if [[ "${GITHUB_REF}" =~ "master" ]]; then
   docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   docker pull ${image}:${latest}
   docker tag ${image}:${latest} ${image}:latest
