@@ -20,6 +20,7 @@ jobs:
 
     - name: build image
       env:
+        DOCKER_BUILDKIT: 1
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
