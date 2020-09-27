@@ -16,7 +16,7 @@ build() {
   docker build --no-cache --build-arg HUGO_VERSION=${tag} -t ${image}:${tag} .
 
   # run test
-  version=$(docker run -ti --rm ${image}:${tag} version)
+  version=$(docker run --rm ${image}:${tag} version)
   #Hugo Static Site Generator v0.70.0-7F47B99E/extended linux/amd64 BuildDate: 2020-05-06T11:26:13Z
 
   version=$(echo ${version}| sed -re 's|.*v([0-9]\.[0-9]{2}\.[0-9]).*|\1|')
